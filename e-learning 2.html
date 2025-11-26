@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vasúti Képzési és Vizsgáztatási E-learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .hero-bg {
+            background-color: #1e40af;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Tipp dobozok */
+        .tip-box { @apply bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4 text-sm text-yellow-900 rounded-r-lg; }
+        .explain-box { @apply bg-blue-50 border-l-4 border-blue-400 p-4 my-4 text-sm text-blue-900 rounded-r-lg; }
+
+        /* Kvíz és Játék Stílusok */
+        .option-btn { transition: all 0.2s; }
+        .option-btn:hover:not(:disabled) { transform: translateX(5px); background-color: #f3f4f6; }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+        .disabled-opt { opacity: 0.7; cursor: not-allowed; }
+        
+        /* Multi-select stílusok */
+        .multi-btn.selected { background-color: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+        .multi-btn.correct-mark { background-color: #d1fae5 !important; border-color: #10b981 !important; }
+        .multi-btn.wrong-mark { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
+
+        /* Matching Game Stílusok */
+        .match-item { cursor: pointer; transition: all 0.2s; }
+        .match-item.selected { background-color: #bfdbfe; border-color: #3b82f6; transform: scale(1.02); }
+        .match-item.matched { background-color: #dcfce7; border-color: #22c55e; color: #15803d; cursor: default; opacity: 0.7; }
+        .match-item.error { animation: shake 0.4s ease-in-out; background-color: #fee2e2; border-color: #ef4444; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        /* Skill Meter a Döntéshozóhoz */
+        .skill-meter-container {
+            height: 300px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-meter-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, #ef4444, #eab308, #22c55e);
+            transition: height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Fejléc -->
+    <header class="hero-bg text-white py-16 shadow-xl relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex items-center gap-6 mb-6">
+                <div class="bg-white/20 p-4 rounded-full shadow-lg backdrop-blur-sm">
+                    <i class="fas fa-subway text-4xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">Vasúti Képzés és Vizsgáztatás</h1>
+                    <p class="text-blue-200 font-semibold tracking-wider uppercase text-sm">19/2011. (V. 10.) NFM rendelet alapján</p>
+                </div>
+            </div>
+            <p class="text-blue-100 text-xl max-w-3xl mb-8 leading-relaxed">
+                Komplex e-learning rendszer részletes elméleti anyagokkal, interaktív <strong>párosítós</strong> és <strong>többválasztós</strong> játékokkal.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="#chapter1" class="bg-white text-blue-900 font-bold px-6 py-3 rounded-full hover:bg-blue-50 transition shadow-md flex items-center gap-2">
+                    <i class="fas fa-book-open"></i> Tananyag
+                </a>
+                <a href="#decision-game" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-full hover:bg-blue-500 transition shadow-md border border-blue-400 flex items-center gap-2">
+                    <i class="fas fa-gamepad"></i> Döntéshozó Játék
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Fő tartalom -->
+    <main class="container mx-auto px-4 py-12 max-w-5xl space-y-20">
+
+        <!-- 1. FEJEZET: KÉPZÉSI PROGRAMOK -->
+        <div id="chapter1" class="group">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-3 h-full bg-blue-600"></div>
+                <div class="p-8 md:p-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-blue-100 text-blue-700 w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold">1</span>
+                        <h2 class="text-3xl font-bold text-gray-900">Képzési Programok Követelményei</h2>
+                    </div>
+                    
+                    <div class="prose max-w-none text-gray-600 space-y-6 text-justify">
+                        <p class="text-lg">A képzési program a vasúti képzés alapdokumentuma, amely meghatározza a képzés minden lényeges paraméterét. A programot a képzőszervezet készíti el, és főszabály szerint a <strong>Képzési Módszertani Központ (KMK)</strong> hagyja jóvá. Vasúti társasági vizsgák esetén a jóváhagyó a vizsgáztató szervezet is lehet.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-8 mt-6">
+                            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                                <h3 class="text-blue-900 font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-clipboard-list"></i> Kötelező Tartalmi Elemek</h3>
+                                <p class="mb-2">A rendelet 6. §-a alapján a programnak tartalmaznia kell:</p>
+                                <ul class="list-disc list-inside space-y-2 text-sm text-blue-900">
+                                    <li><strong>Képzési célok és követelmények:</strong> A megszerezhető kompetenciák pontos leírása (pl. mely munkakör betöltésére jogosít).</li>
+                                    <li><strong>Témakörök:</strong> A rendelet 3. melléklete (vagy 6. melléklete) által előírt pontos témák.</li>
+                                    <li><strong>Arányok:</strong> Az elméleti és gyakorlati képzés arányának meghatározása a megfelelő egyensúly érdekében.</li>
+                                    <li><strong>Vizsgaanyag:</strong> A vizsgatémakörök és az ellenőrző kérdések (kivéve, ha a vizsgáztató szervezet központi kérdésbankját kell használni).</li>
+                                    <li><strong>Módszertan:</strong> Az alkalmazott oktatási eszközök (pl. távoktatás, multimédia, szimulátor) rögzítése.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <h3 class="text-gray-900 font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> Speciális Szabályok</h3>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex items-start gap-2">
+                                        <i class="fas fa-video mt-1 text-blue-500"></i>
+                                        <div>
+                                            <strong>Vonalismeret oktatása:</strong> Ha a képzés során videófelvételt vagy szimulátort alkalmaznak a valós bejárás helyett vagy mellett, ezt a programban <strong>kifejezetten fel kell tüntetni</strong>. Ilyen esetben a programot a KMK-nak kell jóváhagynia (még társasági vizsga esetén is).
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fas fa-sync-alt mt-1 text-green-500"></i>
+                                        <div>
+                                            <strong>Aktualizálási kötelezettség:</strong> A képzési programot évente felül kell vizsgálni (különösen videós oktatásnál). Ha a pályahálózat lényeges jellemzői vagy a biztonsági szabályok megváltoznak, a programot azonnal módosítani kell.
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mini Játék 1 -->
+                <div class="bg-slate-900 p-8 text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-blue-300"><i class="fas fa-puzzle-piece mr-2"></i>Feladat: Programösszeállítás</h3>
+                        <span class="text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Vegyes feladatok</span>
+                    </div>
+                    <div id="mini-game-1-container" class="max-w-3xl mx-auto">
+                        <button onclick="startMiniGame(1)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg transform hover:-translate-y-1">
+                            Játék Indítása
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 2. FEJEZET: ALAPKÉPZÉS MEGKEZDÉSE -->
+        <div id="chapter2" class="group">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-3 h-full bg-green-500"></div>
+                <div class="p-8 md:p-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold">2</span>
+                        <h2 class="text-3xl font-bold text-gray-900">Az Alapképzés Megkezdése</h2>
+                    </div>
+
+                    <p class="text-gray-600 mb-6">A képzések indítása szigorú adminisztrációs feltételekhez kötött.</p>
+
+                    <!-- Statikus Részlet -->
+                    <div class="rounded-xl overflow-hidden bg-green-50 border border-green-100 mb-6 shadow-sm">
+                        <div class="p-5 bg-green-100/50 border-b border-green-200 font-bold text-green-900 flex items-center">
+                            <i class="fas fa-envelope-open-text mr-2"></i>A Bejelentés Tartalma
+                        </div>
+                        <div class="p-5 text-sm text-green-800">
+                            <p class="mb-2 font-semibold">A KMK felé elektronikusan, <span class="text-red-600 font-bold">7 nappal</span> a kezdés előtt be kell küldeni:</p>
+                            <ul class="list-disc list-inside space-y-1 ml-2">
+                                <li>A képzés pontos megnevezését.</li>
+                                <li>A képzés helyszínét (pontos cím).</li>
+                                <li>A kezdés és befejezés időpontját.</li>
+                                <li>A konkrét képzési napokat.</li>
+                                <li>Szállásigényekre vonatkozó tájékoztatást.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-green-200 shadow-sm">
+                            <h4 class="font-bold text-gray-900 mb-2 flex items-center"><i class="fas fa-heartbeat text-green-500 mr-2"></i> Egészségügy</h4>
+                            <p class="text-sm text-gray-600">Felügyelet alatti <strong>gyakorlati képzésen</strong> csak érvényes orvosi alkalmassági birtokában lehet részt venni.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-green-200 shadow-sm">
+                            <h4 class="font-bold text-gray-900 mb-2 flex items-center"><i class="fas fa-book text-green-500 mr-2"></i> Előfeltételek</h4>
+                            <p class="text-sm text-gray-600">Iskolai végzettség (3. melléklet szerint) és <strong>elsősegélynyújtó</strong> ismeretek megléte.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Játék 2 -->
+                <div class="bg-slate-900 p-8 text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-green-400"><i class="fas fa-check-double mr-2"></i>Feladat: Bemeneti Szűrő</h3>
+                        <span class="text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Többválasztós</span>
+                    </div>
+                    <div id="mini-game-2-container" class="max-w-3xl mx-auto">
+                        <button onclick="startMiniGame(2)" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition shadow-lg transform hover:-translate-y-1">
+                            Játék Indítása
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 3. FEJEZET: HIÁNYZÁS -->
+        <div id="chapter3" class="group">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-3 h-full bg-yellow-500"></div>
+                <div class="p-8 md:p-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-yellow-100 text-yellow-700 w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold">3</span>
+                        <h2 class="text-3xl font-bold text-gray-900">Hiányzási Szabályok</h2>
+                    </div>
+
+                    <!-- Statikus Részlet -->
+                    <div class="rounded-xl overflow-hidden bg-yellow-50 border border-yellow-100 mb-6 shadow-sm">
+                        <div class="p-5 bg-yellow-100/50 border-b border-yellow-200 font-bold text-yellow-900 flex items-center">
+                            <i class="fas fa-calculator mr-2"></i>Hiányzási Sávok és Következmények
+                        </div>
+                        <div class="p-5 text-sm text-yellow-900">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4 p-3 bg-white rounded border border-yellow-200">
+                                    <div class="font-bold text-green-600 text-lg w-20 flex-shrink-0">0-10%</div>
+                                    <div><strong>Megengedett.</strong> Nincs pótlási kötelezettség. A tanuló folytathatja a képzést.</div>
+                                </div>
+                                <div class="flex items-center gap-4 p-3 bg-white rounded border border-yellow-200">
+                                    <div class="font-bold text-yellow-600 text-lg w-20 flex-shrink-0">10-30%</div>
+                                    <div><strong>Pótlás kötelező!</strong><br>Elmélet: konzultációval.<br>Gyakorlat: a gyakorlat elvégzésével.</div>
+                                </div>
+                                <div class="flex items-center gap-4 p-3 bg-white rounded border border-yellow-200">
+                                    <div class="font-bold text-red-600 text-lg w-20 flex-shrink-0">>30%</div>
+                                    <div><strong>Kizárás!</strong> A képzést nem folytathatja, vizsgát csak új alapképzés után tehet.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Játék 3 -->
+                <div class="bg-slate-900 p-8 text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-yellow-400"><i class="fas fa-project-diagram mr-2"></i>Feladat: Párosító</h3>
+                        <span class="text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Párosítás</span>
+                    </div>
+                    <div id="mini-game-3-container" class="max-w-3xl mx-auto">
+                        <button onclick="startMiniGame(3)" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 rounded-xl transition shadow-lg transform hover:-translate-y-1">
+                            Játék Indítása
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 4. FEJEZET: FELMENTÉSEK -->
+        <div id="chapter4" class="group">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-3 h-full bg-purple-500"></div>
+                <div class="p-8 md:p-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-purple-100 text-purple-700 w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold">4</span>
+                        <h2 class="text-3xl font-bold text-gray-900">Felmentési Lehetőségek Részletesen</h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <!-- Kérelmezés és Határidő -->
+                        <div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
+                            <h3 class="text-purple-900 font-bold text-lg mb-4 flex items-center">
+                                <i class="fas fa-hourglass-half mr-2"></i> Kérelmezés és Határidő
+                            </h3>
+                            <ul class="space-y-3 text-sm text-purple-900">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-users mt-1"></i>
+                                    <span><strong>Ki kérheti?</strong> A képzésben résztvevő munkavállaló és a munkáltató (vasúti társaság) <strong>együttesen</strong>.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-clock mt-1 text-red-600"></i>
+                                    <span><strong>Határidő:</strong> A kérelmet a <strong>képzés megkezdése előtt</strong> kell benyújtani. Később már nem adható felmentés.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-paper-plane mt-1"></i>
+                                    <span><strong>Benyújtás helye:</strong> A Képzési Módszertani Központhoz (vagy hatósági vizsga esetén a Hatósághoz).</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Mi alól adható / Nem adható -->
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="text-gray-900 font-bold text-lg mb-4 flex items-center">
+                                <i class="fas fa-ban mr-2 text-red-500"></i> Mentesítés Korlátai
+                            </h3>
+                            <div class="space-y-4 text-sm">
+                                <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                                    <div>
+                                        <strong class="text-green-900 block">Adható:</strong>
+                                        <span class="text-green-800">Az alapképzés <strong>elméleti tantárgyainak</strong> oktatásán való részvétel (óralátogatás) alól.</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                                    <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                                    <div>
+                                        <strong class="text-red-900 block">NEM adható:</strong>
+                                        <span class="text-red-800">Maga a <strong>vizsgakötelezettség</strong> alól. A vizsgát minden esetben le kell tenni (kivéve speciális megfeleltetés esetén).</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Részletes Táblázat -->
+                    <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                        <div class="bg-gray-100 p-4 font-bold text-gray-700 border-b border-gray-200">
+                            <i class="fas fa-list mr-2"></i>Konkrét Jogcímek és Feltételek
+                        </div>
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4 border-b">Jogcím</th>
+                                    <th class="p-4 border-b">Feltétel</th>
+                                    <th class="p-4 border-b">Engedélyező</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 font-semibold text-gray-900">Állami felsőfokú végzettség</td>
+                                    <td class="p-4 text-gray-600">
+                                        Diplomával igazolt végzettség + A munkáltató írásban igazolja, hogy biztosítja a <strong>konzultációs lehetőséget</strong>.
+                                    </td>
+                                    <td class="p-4 text-indigo-600 font-bold">KMK</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 font-semibold text-gray-900">OKJ / Szakmajegyzék</td>
+                                    <td class="p-4 text-gray-600">
+                                        A rendelet 9. mellékletében szereplő szakképesítés megléte. (Teljes alapképzés alól mentesíthet).
+                                    </td>
+                                    <td class="p-4 text-indigo-600 font-bold">KMK</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 font-semibold text-gray-900">Ágazati Szakmai Képzés</td>
+                                    <td class="p-4 text-gray-600">
+                                        Ágazati programkövetelmények szerinti sikeres szakmai vizsga.
+                                    </td>
+                                    <td class="p-4 text-red-600 font-bold">HATÓSÁG</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-4 font-semibold text-gray-900">Korábbi vizsga beszámítása</td>
+                                    <td class="p-4 text-gray-600">
+                                        Ha az új képzési program tartalmazza a korábbit, és a vizsgázó abból <strong>érvényes vizsgával</strong> rendelkezik.
+                                    </td>
+                                    <td class="p-4 text-indigo-600 font-bold">KMK</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mini Játék 4 -->
+                <div class="bg-slate-900 p-8 text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-purple-400"><i class="fas fa-user-shield mr-2"></i>Kvíz: Ki ad felmentést?</h3>
+                        <span class="text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">10 Kérdés</span>
+                    </div>
+                    <div id="mini-game-4-container" class="max-w-3xl mx-auto">
+                        <button onclick="startMiniGame(4)" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-xl transition shadow-lg transform hover:-translate-y-1">
+                            Játék Indítása
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 5. FEJEZET: VIZSGÁK -->
+        <div id="chapter5" class="group">
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-3 h-full bg-red-600"></div>
+                <div class="p-8 md:p-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="bg-red-100 text-red-700 w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-bold">5</span>
+                        <h2 class="text-3xl font-bold text-gray-900">Vizsgák Típusai és Határidők</h2>
+                    </div>
+
+                    <div class="explain-box mb-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 text-sm text-blue-900 rounded-r-lg">
+                            <strong>Miért fontos a különbségtétel?</strong><br>
+                            A <strong>KAV Hatósági Vizsga</strong> szervezése központosított, ezért hosszabb adminisztrációs időt igényel. A <strong>Vasúti Társasági Vizsga</strong> belső szervezésű, így rugalmasabb.
+                        </div>
+                    </div>
+
+                    <div class="tip-box mb-6">
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-yellow-900 rounded-r-lg">
+                            <strong>Memória Tipp: A "Kéz-szabály"</strong><br>
+                            <ul>
+                                <li><strong>KAV (Hatósági):</strong> "Két kéz" (10 ujj) = <strong>10 munkanap</strong>.</li>
+                                <li><strong>Társasági:</strong> "Egy kéz" (5 ujj) = <strong>5 munkanap</strong>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Statikus Részlet -->
+                    <div class="rounded-xl overflow-hidden bg-red-50 border border-red-100 mb-6 shadow-sm">
+                        <div class="p-5 bg-red-100/50 border-b border-red-200 font-bold text-red-900 flex items-center">
+                            <i class="fas fa-stopwatch mr-2"></i>Határidők és Javítási Lehetőségek (Részletes)
+                        </div>
+                        <div class="p-5 text-sm text-red-900">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-200">
+                                    <h4 class="font-bold mb-2 border-b border-blue-100 pb-1 text-blue-700">KAV Hatósági Vizsga</h4>
+                                    <ul class="space-y-2">
+                                        <li><strong>Bejelentés:</strong> Vizsga előtt 10. munkanapig.</li>
+                                        <li><strong>Kitűzés:</strong> Bejelentést követő 9 munkanapon túl.</li>
+                                        <li><strong>Törlés:</strong> Vizsga előtt 5. munkanapig.</li>
+                                        <li><strong>Vizsgabiztos:</strong> Vizsgaközpont jelöli ki.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm border border-green-200">
+                                    <h4 class="font-bold mb-2 border-b border-green-100 pb-1 text-green-700">Társasági Vizsga</h4>
+                                    <ul class="space-y-2">
+                                        <li><strong>Bejelentés:</strong> Vizsga előtt 5. munkanapig.</li>
+                                        <li><strong>Vizsgabiztos:</strong> Képzőszervezet rögzíti.</li>
+                                        <li><strong>Módosítás:</strong> Vizsgabiztos személye a vizsga kezdetéig módosítható.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Kért kiegészítés a bejelentési időkkel -->
+                            <div class="mt-6 p-4 bg-white rounded-lg shadow-sm border-l-4 border-red-500">
+                                <strong class="block text-red-700 mb-3 text-base">Vizsgatípusok és Bejelentés:</strong>
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    <div class="bg-red-50 p-3 rounded border border-red-100">
+                                        <strong class="block text-red-800">Alapvizsga</strong>
+                                        <p class="mb-2 text-xs text-gray-600">Max. 3 javító. Sikertelenség esetén: <strong>Kiegészítő Alapképzés</strong>.</p>
+                                        <div class="text-xs text-red-600 font-bold border-t border-red-200 pt-2"><i class="far fa-clock"></i> Bejelentés: 10 munkanap</div>
+                                    </div>
+                                    <div class="bg-red-50 p-3 rounded border border-red-100">
+                                        <strong class="block text-red-800">Időszakos vizsga</strong>
+                                        <p class="mb-2 text-xs text-gray-600">Max. 2 javító. Sikertelenség esetén: <strong>Soron kívüli vizsga</strong>.</p>
+                                        <div class="text-xs text-red-600 font-bold border-t border-red-200 pt-2">
+                                            <i class="far fa-clock"></i> Normál: 10 munkanap<br>
+                                            <span class="text-green-700">Javító: 5 munkanap</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-red-50 p-3 rounded border border-red-100">
+                                        <strong class="block text-red-800">Hatósági soron kívüli</strong>
+                                        <p class="mb-2 text-xs text-gray-600">Nincs javító. Sikertelenség esetén: <strong>Alapvizsga</strong>.</p>
+                                        <div class="text-xs text-red-600 font-bold border-t border-red-200 pt-2"><i class="far fa-clock"></i> Bejelentés: 10 munkanap</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tip-box bg-white border-red-400 text-red-900 mt-4">
+                                <strong>Memória Tipp: A "3-2-0" Visszaszámlálás</strong><br>
+                                Ahogy szigorodik a helyzet, úgy fogy el a lehetőség:<br>
+                                <ul class="mt-1 list-none">
+                                    <li>🎯 <strong>3</strong> esély az <strong>Alapnál</strong> (Ha bukás: Kiegészítő képzés)</li>
+                                    <li>⚠️ <strong>2</strong> esély az <strong>Időszakosnál</strong> (Ha bukás: Soron kívüli)</li>
+                                    <li>⛔ <strong>0</strong> esély a <strong>Hatóságinál</strong> (Ha bukás: Újra az Alap!)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Játék 5 -->
+                <div class="bg-slate-900 p-8 text-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-red-400"><i class="fas fa-project-diagram mr-2"></i>Feladat: Vizsga Mátrix</h3>
+                        <span class="text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">Vegyes</span>
+                    </div>
+                    <div id="mini-game-5-container" class="max-w-3xl mx-auto">
+                        <button onclick="startMiniGame(5)" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition shadow-lg transform hover:-translate-y-1">
+                            Játék Indítása
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- NAGY JÁTÉK: VASÚTI DÖNTÉSHOZÓ -->
+        <div id="decision-game" class="mt-24 pt-12 border-t-4 border-blue-100">
+            <div class="text-center mb-12">
+                <div class="inline-block bg-blue-600 text-white p-4 rounded-full shadow-lg mb-4 text-3xl">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Vasúti Döntéshozó</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">30 éles szituáció vár rád. Te vagy az adminisztrátor. Minden döntésed számít a karriered szempontjából!</p>
+            </div>
+
+            <div class="bg-slate-900 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 min-h-[600px]">
+                <!-- Játék Tér -->
+                <div class="flex-1 relative z-10 flex flex-col">
+                    <!-- Start -->
+                    <div id="game-start" class="flex flex-col items-center justify-center h-full text-center p-8">
+                        <div class="text-7xl mb-8 animate-bounce">🚉</div>
+                        <h3 class="text-3xl font-bold mb-6">Készen állsz a műszakra?</h3>
+                        <p class="text-slate-300 mb-10 text-lg">A játék során 30 véletlenszerű feladatot kapsz a hatósági és társasági vizsgák, valamint a képzések világából.</p>
+                        <button onclick="startDecisionGame()" class="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 px-12 rounded-full shadow-lg transition transform hover:scale-105 text-lg">
+                            Műszak Kezdése
+                        </button>
+                    </div>
+
+                    <!-- In-Game -->
+                    <div id="game-ui" class="hidden h-full flex flex-col">
+                        <div class="flex justify-between items-center text-sm font-mono text-slate-400 mb-8 bg-black/20 p-4 rounded-xl">
+                            <span>Ügyirat: <span id="scenario-num" class="text-white font-bold">1</span> / 30</span>
+                            <span>Pontszám: <span id="game-score" class="text-green-400 font-bold text-lg">0</span></span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center mb-8">
+                            <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 shadow-inner">
+                                <p id="scenario-text" class="text-xl md:text-2xl font-medium leading-relaxed text-center">Szituáció betöltése...</p>
+                            </div>
+                        </div>
+                        <div id="game-options" class="grid md:grid-cols-2 gap-4"></div>
+                        <div id="game-feedback" class="mt-6 p-5 rounded-xl hidden text-center font-bold text-lg border shadow-lg"></div>
+                        <button id="game-next-btn" onclick="nextScenario()" class="mt-6 w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold text-lg shadow-lg hidden transition">Következő Ügyirat <i class="fas fa-arrow-right ml-2"></i></button>
+                    </div>
+
+                    <!-- End -->
+                    <div id="game-end" class="hidden flex flex-col items-center justify-center h-full text-center p-8">
+                        <div class="text-7xl mb-6">🏁</div>
+                        <h3 class="text-4xl font-bold mb-4">Műszak Vége!</h3>
+                        <p class="text-2xl text-slate-300 mb-8">Végső Eredmény: <span id="final-game-score" class="text-yellow-400 font-bold text-4xl">0</span> / 30</p>
+                        <div id="final-feedback-text" class="bg-white/10 p-8 rounded-2xl mb-10 text-lg font-medium border border-white/10"></div>
+                        <button onclick="resetDecisionGame()" class="bg-white/10 hover:bg-white/20 text-white py-3 px-8 rounded-full font-bold border border-white/30 transition">Új Műszak</button>
+                    </div>
+                </div>
+
+                <!-- Oldalsáv: Skill Meter -->
+                <div class="w-full lg:w-72 bg-slate-800/80 rounded-2xl p-6 border border-slate-700 flex flex-col items-center relative z-10 shadow-xl backdrop-blur-sm">
+                    <h4 class="text-slate-400 text-xs uppercase tracking-widest mb-6 font-bold">Kompetencia Szint</h4>
+                    <div class="skill-meter-container w-20 flex-1 mb-6 border-2 border-slate-600 relative bg-slate-900 rounded-full overflow-hidden shadow-inner">
+                        <div id="skill-fill" class="skill-meter-fill w-full absolute bottom-0 left-0 transition-all duration-700 ease-out" style="height: 0%;"></div>
+                        <div class="absolute bottom-[30%] w-full border-t border-white/30 z-10"></div>
+                        <div class="absolute bottom-[60%] w-full border-t border-white/30 z-10"></div>
+                        <div class="absolute bottom-[90%] w-full border-t border-white/30 z-10"></div>
+                    </div>
+                    <div id="current-rank" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-lg w-full text-center shadow-lg border border-blue-400/30">Gyakornok</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ZÁRÓ TUDÁSPRÓBA -->
+        <div id="tudasproba" class="mt-24 pt-12 border-t border-gray-200 pb-24">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-10 text-white text-center">
+                    <h2 class="text-4xl font-bold mb-4"><i class="fas fa-graduation-cap mr-3"></i>Záró Tudáspróba</h2>
+                    <p class="text-lg opacity-90">A hatósági vizsga szimulációja. 30 kérdés, egyetlen helyes válasz.</p>
+                </div>
+                <div class="p-8 md:p-12">
+                    <div id="quiz-start-panel" class="text-center py-8">
+                        <p class="text-gray-600 text-xl mb-10">A teszt kérdései minden indításkor véletlenszerű sorrendben jelennek meg.</p>
+                        <button onclick="startQuiz()" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-12 rounded-full transition transform hover:-translate-y-1 shadow-xl text-lg">Teszt Indítása</button>
+                    </div>
+                    <div id="quiz-interface" class="hidden">
+                        <div class="w-full bg-gray-100 rounded-full h-4 mb-8 overflow-hidden">
+                            <div id="quiz-progress" class="bg-yellow-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-500 mb-4 font-bold uppercase tracking-wide">
+                            <span>Kérdés <span id="quiz-current-num">1</span> / 30</span>
+                            <span>Pont: <span id="quiz-score">0</span></span>
+                        </div>
+                        <h3 id="quiz-question-text" class="text-2xl font-bold text-gray-900 mb-8 leading-snug">Kérdés...</h3>
+                        <div id="quiz-options" class="space-y-4"></div>
+                        <div id="quiz-explanation" class="mt-8 p-6 bg-blue-50 text-blue-900 rounded-xl border border-blue-100 hidden">
+                            <strong class="block mb-2 text-lg"><i class="fas fa-info-circle mr-2"></i>Magyarázat:</strong>
+                            <span id="quiz-explanation-text" class="leading-relaxed"></span>
+                        </div>
+                        <div class="mt-8 text-right">
+                            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="bg-gray-900 text-white font-bold py-3 px-10 rounded-xl hover:bg-gray-800 hidden transition shadow-lg">Következő <i class="fas fa-chevron-right ml-2"></i></button>
+                        </div>
+                    </div>
+                    <div id="quiz-result" class="hidden text-center py-8">
+                        <div class="text-7xl mb-6">🏆</div>
+                        <h3 class="text-4xl font-bold text-gray-900 mb-4">Eredmény</h3>
+                        <div class="text-6xl font-bold text-yellow-500 mb-8"><span id="final-quiz-score">0</span> / 30</div>
+                        <p id="quiz-feedback-text" class="text-2xl text-gray-600 mb-12 font-light"></p>
+                        <button onclick="location.reload()" class="bg-blue-600 text-white font-bold py-4 px-10 rounded-full hover:bg-blue-700 transition shadow-lg">Tananyag Újrakezdése</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- MINI JÁTÉK ADATOK ---
+        // Típusok: 'single' (egy választás), 'multi' (több jó válasz), 'match' (párosítás)
+        const miniGameData = {
+            1: [ // 1. Képzési Programok (10 db)
+                { type: 'multi', q: "Melyek a képzési program kötelező tartalmi elemei? (Jelöld be mindet!)", options: [{text:"Képzési célok", correct:true}, {text:"Időjárás jelentés", correct:false}, {text:"Témakörök", correct:true}, {text:"Oktatók telefonszáma", correct:false}, {text:"Vizsgaanyag", correct:true}] },
+                { type: 'match', q: "Párosítsd az oktatási típust a feltétellel!", pairs: [{left:"Hagyományos elmélet", right:"Nincs extra jelölés"}, {left:"Vonalismeret videóval", right:"Programban jelölni kell"}, {left:"Távoktatás", right:"Eszközök rögzítése"}] },
+                { type: 'single', q: "Ki hagyja jóvá főszabály szerint a programot?", a: ["Képzési Módszertani Központ", "Hatóság", "Munkáltató", "Oktatási Hivatal"], c: 0 },
+                { type: 'single', q: "Ki készíti el a képzési programot?", a: ["A képzőszervezet", "A vizsgázó", "A minisztérium", "A szakszervezet"], c: 0 },
+                { type: 'multi', q: "Mikor kell módosítani a programot?", options: [{text:"Jogszabályváltozáskor", correct:true}, {text:"Minden hónapban", correct:false}, {text:"Infrastruktúra változáskor", correct:true}, {text:"Ha esik az eső", correct:false}] },
+                { type: 'single', q: "Tartalmaznia kell-e a programnak az óraszámokat?", a: ["Igen, elmélet/gyakorlat arányt", "Nem, azt az oktató dönti el", "Csak a gyakorlatit", "Csak az elméletit"], c: 0 },
+                { type: 'match', q: "Párosítsd a jóváhagyókat!", pairs: [{left:"Általános képzés", right:"KMK"}, {left:"Társasági vizsga", right:"Vizsgáztató szervezet"}, {left:"Oktatói alapképzés", right:"Hatóság"}] },
+                { type: 'single', q: "Használható-e szimulátor a képzésben?", a: ["Igen, ha a program tartalmazza", "Nem, tilos", "Csak külföldön", "Titokban"], c: 0 },
+                { type: 'single', q: "Hol érhetők el a vizsgatémakörök?", a: ["A képzési programban", "A Facebookon", "Sehol", "A menetrendben"], c: 0 },
+                { type: 'single', q: "Mi a képzés alapdokumentuma?", a: ["Képzési program", "Jelenléti ív", "Bizonyítvány", "Számla"], c: 0 }
+            ],
+            2: [ // 2. Alapképzés kezdése (10 db)
+                { type: 'single', q: "Mennyi a bejelentési határidő alapképzésnél?", a: ["7 nappal a kezdés előtt", "A kezdés napján", "30 nappal előtte", "Utólag"], c: 0 },
+                { type: 'multi', q: "Mik a bejelentés kötelező elemei?", options: [{text:"Helyszín", correct:true}, {text:"Résztvevők neme", correct:false}, {text:"Időpontok", correct:true}, {text:"Képzés neve", correct:true}] },
+                { type: 'match', q: "Párosítsd a feltételeket!", pairs: [{left:"Gyakorlati képzés", right:"Orvosi alkalmasság"}, {left:"Képzés indítása", right:"Bejelentés"}, {left:"Bemenet", right:"Iskolai végzettség"}] },
+                { type: 'single', q: "Kinek kell bejelenteni a képzést?", a: ["KMK-nak", "Hatóságnak", "Rendőrségnek", "Munkáltatónak"], c: 0 },
+                { type: 'single', q: "Hogyan történik a bejelentés?", a: ["Elektronikus úton", "Postai levélben", "Telefonon", "Személyesen"], c: 0 },
+                { type: 'single', q: "Szükséges-e elsősegélynyújtó vizsga?", a: ["Igen, előfeltétel", "Nem szükséges", "Csak a vizsgához", "Csak vezetőknek"], c: 0 },
+                { type: 'single', q: "Ki ellenőrizheti a képzést?", a: ["Hatóság és KMK", "Senki", "Csak a vizsgabiztos", "A média"], c: 0 },
+                { type: 'single', q: "Kell-e szállásigényről tájékoztatni?", a: ["Igen, a bejelentésben", "Nem", "Csak ha kérik", "Csak külföldön"], c: 0 },
+                { type: 'single', q: "Mikor kezdhető a gyakorlati képzés?", a: ["Orvosi alkalmasság után", "Bármikor", "Elmélet előtt", "Beiratkozáskor"], c: 0 },
+                { type: 'single', q: "Mit kell tenni, ha szünetel a képzés?", a: ["Bejelenteni a hatóságnak", "Semmit", "Újrakezdeni", "Várni"], c: 0 }
+            ],
+            3: [ // 3. Hiányzás (10 db)
+                { type: 'match', q: "Párosítsd a százalékokat!", pairs: [{left:"0-10%", right:"Megengedett"}, {left:"10-30%", right:"Pótlás kötelező"}, {left:">30%", right:"Kizárás"}] },
+                { type: 'single', q: "Hogyan pótolható az elméleti hiányzás?", a: ["Konzultációval", "Otthoni olvasással", "Nem pótolható", "Gyakorlattal"], c: 0 },
+                { type: 'single', q: "Hogyan pótolható a gyakorlati hiányzás?", a: ["A gyakorlat elvégzésével", "Elméleti órával", "Írásbeli beszámolóval", "Pénzbefizetéssel"], c: 0 },
+                { type: 'multi', q: "Mikor NEM lehet vizsgára bocsátani?", options: [{text:"35% hiányzásnál", correct:true}, {text:"5% hiányzásnál", correct:false}, {text:"Pótolatlan 20%-nál", correct:true}, {text:"Pótolt 15%-nál", correct:false}] },
+                { type: 'single', q: "Ki igazolja a pótlást?", a: ["A képzőszervezet", "A vizsgázó", "Az orvos", "A hatóság"], c: 0 },
+                { type: 'single', q: "Beleszámít-e a betegség a 30%-ba?", a: ["Igen, minden távollét számít", "Nem, az igazolt", "Csak ha kórház", "Nem számít"], c: 0 },
+                { type: 'single', q: "Mit jelent a modulrendszerű hiányzás?", a: ["Modulonként nézik a %-ot", "Összesen nézik", "Csak az első modult", "Nincs ilyen"], c: 0 },
+                { type: 'single', q: "Vizsgázhat-e, aki 15%-ot hiányzott és pótolta?", a: ["Igen", "Nem", "Csak szóbelin", "Csak írásbelin"], c: 0 },
+                { type: 'single', q: "Mi a teendő kizárás esetén?", a: ["Meg kell ismételni a képzést", "Pótvizsga", "Méltányossági kérelem", "Semmi"], c: 0 },
+                { type: 'single', q: "Elég-e önállóan tanulni hiányzáskor?", a: ["Nem, igazolt pótlás kell", "Igen, ha tudja az anyagot", "Csak ha beteg volt", "Igen"], c: 0 }
+            ],
+            4: [ // 4. Felmentések (10 db)
+                { type: 'match', q: "Ki adja a felmentést?", pairs: [{left:"OKJ/Szakmajegyzék", right:"KMK"}, {left:"Ágazati Szakmai Képzés", right:"Hatóság"}, {left:"Felsőfokú végzettség", right:"KMK"}] },
+                { type: 'multi', q: "Mi kell a diplomás felmentéshez?", options: [{text:"Állami felsőfokú végzettség", correct:true}, {text:"Konzultációs igazolás", correct:true}, {text:"Orvosi igazolás", correct:false}, {text:"Nyelvvizsga", correct:false}] },
+                { type: 'single', q: "Mire adható felmentés diplomával?", a: ["Elméleti oktatásra", "Gyakorlatra", "Vizsgára", "Mindenre"], c: 0 },
+                { type: 'single', q: "Hogyan kell kérni a felmentést?", a: ["Együttes kérelemben a céggel", "Egyénileg", "Szóban", "Utólag"], c: 0 },
+                { type: 'single', q: "Mikor kell kérni?", a: ["Képzésre jelentkezéskor", "Vizsga napján", "Bármikor", "Ha már hiányzott"], c: 0 },
+                { type: 'single', q: "Adható-e felmentés csak gyakorlat alapján?", a: ["Nem, végzettség kell", "Igen, 5 év után", "Igen, 10 év után", "Munkáltató dönt"], c: 0 },
+                { type: 'single', q: "Mit jelent a tantárgyi felmentés?", a: ["Új programnál a régi elismerése", "Nincs ilyen", "Minden alól mentesít", "Csak vizsga alól"], c: 0 },
+                { type: 'single', q: "Vizsga alól van-e mentesítés?", a: ["Nincs (kivéve eltérés vizsga)", "Van", "Csak írásbeli alól", "Csak gyakorlati alól"], c: 0 },
+                { type: 'single', q: "Hol sorolják fel a mentesítő szakmákat?", a: ["9. mellékletben", "Az újságban", "A szerződésben", "Sehol"], c: 0 },
+                { type: 'single', q: "Ki igazolja a konzultációt?", a: ["A vasúti társaság", "A vizsgázó", "Az egyetem", "A KMK"], c: 0 }
+            ],
+            5: [ // 5. Vizsgák (10 db)
+                { type: 'match', q: "Párosítsd a bejelentési határidőket!", pairs: [{left:"KAV Hatósági Vizsga", right:"10 munkanap"}, {left:"Társasági Vizsga", right:"5 munkanap"}, {left:"Vizsga Törlése", right:"5 munkanap"}] },
+                { type: 'match', q: "Párosítsd a javítóvizsga lehetőségeket!", pairs: [{left:"Alapvizsga", right:"3 alkalom"}, {left:"Időszakos vizsga", right:"2 alkalom"}, {left:"Hatósági soron kívüli", right:"Nincs javító"}] },
+                { type: 'multi', q: "Mi a teendő sikertelen alapvizsgák után?", options: [{text:"Kiegészítő alapképzés", correct:true}, {text:"Pénzbüntetés", correct:false}, {text:"Min. 50% óraszám", correct:true}, {text:"Azonnali újrázás", correct:false}] },
+                { type: 'single', q: "Mennyi az alapvizsga érvényessége?", a: ["3 év", "5 év", "1 év", "Végleges"], c: 0 },
+                { type: 'single', q: "Ki jelöli ki a vizsgabiztost KAV vizsgán?", a: ["A Vizsgaközpont", "A Képző", "A Munkáltató", "A Vizsgázó"], c: 0 },
+                { type: 'single', q: "Mikor kell megkezdeni a vizsgát?", a: ["Képzés után 14 napon belül", "30 napon belül", "Azonnal", "Fél éven belül"], c: 0 },
+                { type: 'single', q: "Mennyi a sikeres írásbeli határa?", a: ["75%", "50%", "60%", "80%"], c: 0 },
+                { type: 'single', q: "Lehet-e vizsgázni pótlás nélkül (15% hiányzás)?", a: ["Nem", "Igen", "Talán", "Ha engedik"], c: 0 },
+                { type: 'single', q: "Társasági vizsgánál meddig módosítható a vizsgabiztos?", a: ["A vizsga kezdetéig", "5 nappal előtte", "10 nappal előtte", "Nem módosítható"], c: 0 },
+                { type: 'match', q: "Párosítsd a sikertelenség következményét!", pairs: [{left:"Sikertelen alapvizsga (3x)", right:"Kiegészítő képzés"}, {left:"Sikertelen időszakos (2x)", right:"Soron kívüli vizsga"}, {left:"Sikertelen soron kívüli", right:"Alapvizsga"}] }
+            ]
+        };
+
+        // --- RENDER LOGIKA ---
+        const activeGames = {};
+
+        function startMiniGame(chapterId) {
+            const questions = [...miniGameData[chapterId]];
+            shuffleArray(questions);
+            activeGames[chapterId] = { questions: questions, currentQ: 0, score: 0, selections: [], matchedPairs: 0 };
+            renderMiniGame(chapterId);
+        }
+
+        function renderMiniGame(chapterId) {
+            const state = activeGames[chapterId];
+            const container = document.getElementById(`mini-game-${chapterId}-container`);
+
+            if (state.currentQ >= state.questions.length) {
+                container.innerHTML = `<div class="text-center bg-slate-800 p-6 rounded-xl border border-slate-700 animate-fade-in"><h4 class="text-2xl font-bold mb-4 text-white">Eredmény</h4><p class="text-5xl font-bold text-${state.score >= 8 ? 'green' : state.score >= 5 ? 'yellow' : 'red'}-400 mb-6">${state.score} / 10</p><button onclick="startMiniGame(${chapterId})" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-8 rounded-full transition">Újra</button></div>`;
+                return;
+            }
+
+            const q = state.questions[state.currentQ];
+            let html = `<div class="bg-slate-800 p-6 rounded-xl border border-slate-700"><div class="flex justify-between text-sm text-slate-400 mb-4 font-mono"><span>Kérdés: ${state.currentQ + 1} / 10</span><span>Pont: ${state.score}</span></div><h4 class="text-lg font-bold mb-6 text-white min-h-[3.5rem] flex items-center">${q.q}</h4>`;
+
+            // Típus szerinti renderelés
+            if (q.type === 'single') {
+                let opts = q.a.map((txt, idx) => ({ txt, isCorrect: idx === q.c }));
+                shuffleArray(opts);
+                html += `<div class="grid grid-cols-1 gap-3">`;
+                opts.forEach(opt => html += `<button class="option-btn w-full text-left p-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition border border-slate-600 font-medium" onclick="handleSingleAnswer(${chapterId}, this, ${opt.isCorrect})">${opt.txt}</button>`);
+                html += `</div>`;
+            } 
+            else if (q.type === 'multi') {
+                // Multi-select
+                state.selections = new Array(q.options.length).fill(false);
+                html += `<div class="grid grid-cols-1 gap-3" id="multi-opts-${chapterId}">`;
+                q.options.forEach((opt, i) => {
+                    html += `<button id="multi-${chapterId}-${i}" class="multi-btn w-full text-left p-4 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition border border-slate-600 font-medium flex justify-between items-center" onclick="toggleMulti(${chapterId}, ${i})"><span>${opt.text}</span><i class="far fa-square text-xl"></i></button>`;
+                });
+                html += `</div><button onclick="checkMultiAnswer(${chapterId})" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition">Ellenőrzés</button>`;
+            }
+            else if (q.type === 'match') {
+                // Matching
+                state.selectedLeft = null;
+                state.matchedCount = 0;
+                const lefts = q.pairs.map((p, i) => ({ txt: p.left, id: i, rightTxt: p.right }));
+                const rights = q.pairs.map((p, i) => ({ txt: p.right, id: i })); 
+                shuffleArray(lefts); shuffleArray(rights);
+                html += `<div class="grid grid-cols-2 gap-4"><div><h5 class="text-slate-400 mb-2 text-center text-xs uppercase">Fogalom</h5>`;
+                lefts.forEach(l => html += `<div id="left-${chapterId}-${l.id}" class="match-item bg-slate-700 p-3 rounded mb-2 text-white text-center border border-slate-600" onclick="selectMatch(${chapterId}, 'left', ${l.id})">${l.txt}</div>`);
+                html += `</div><div><h5 class="text-slate-400 mb-2 text-center text-xs uppercase">Párja</h5>`;
+                rights.forEach(r => html += `<div id="right-${chapterId}-${r.id}" class="match-item bg-slate-700 p-3 rounded mb-2 text-white text-center border border-slate-600" onclick="selectMatch(${chapterId}, 'right', ${r.id})">${r.txt}</div>`);
+                html += `</div></div><p id="match-msg-${chapterId}" class="text-center text-sm text-slate-400 mt-2">Kattints egy elemre bal oldalon, majd a párjára jobb oldalon!</p>`;
+            }
+
+            html += `<div id="feedback-${chapterId}" class="mt-4 hidden font-bold text-center p-3 rounded"></div><button onclick="nextMiniQuestion(${chapterId})" id="next-${chapterId}" class="hidden w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition">Tovább</button></div>`;
+            container.innerHTML = html;
+        }
+
+        // --- Handler Functions ---
+        window.handleSingleAnswer = function(chId, btn, isCorrect) {
+            const container = document.getElementById(`mini-game-${chId}-container`);
+            container.querySelectorAll('.option-btn').forEach(b => { b.disabled = true; b.classList.add('disabled-opt'); });
+            const feedback = document.getElementById(`feedback-${chId}`);
+            if(isCorrect) {
+                activeGames[chId].score++;
+                btn.classList.add('correct');
+                feedback.innerHTML = "Helyes! ✅";
+                feedback.className = "mt-4 font-bold text-center p-3 rounded bg-green-600/20 text-green-400 border border-green-500 block";
+            } else {
+                btn.classList.add('wrong');
+                feedback.innerHTML = "Sajnos nem. ❌";
+                feedback.className = "mt-4 font-bold text-center p-3 rounded bg-red-600/20 text-red-400 border border-red-500 block";
+            }
+            document.getElementById(`next-${chId}`).classList.remove('hidden');
+        };
+
+        window.toggleMulti = function(chId, idx) {
+            const state = activeGames[chId];
+            state.selections[idx] = !state.selections[idx];
+            const btn = document.getElementById(`multi-${chId}-${idx}`);
+            const icon = btn.querySelector('i');
+            if(state.selections[idx]) { btn.classList.add('selected'); icon.classList.replace('fa-square', 'fa-check-square'); } 
+            else { btn.classList.remove('selected'); icon.classList.replace('fa-check-square', 'fa-square'); }
+        };
+
+        window.checkMultiAnswer = function(chId) {
+            const state = activeGames[chId];
+            const q = state.questions[state.currentQ];
+            const feedback = document.getElementById(`feedback-${chId}`);
+            let allCorrect = true;
+            q.options.forEach((opt, i) => {
+                const btn = document.getElementById(`multi-${chId}-${i}`);
+                btn.disabled = true; btn.classList.remove('selected');
+                if (opt.correct) btn.classList.add('correct-mark');
+                if ((state.selections[i] && !opt.correct) || (!state.selections[i] && opt.correct)) {
+                    allCorrect = false;
+                    if(state.selections[i]) btn.classList.add('wrong-mark');
+                }
+            });
+            event.target.classList.add('hidden');
+            if(allCorrect) {
+                state.score++; feedback.innerHTML = "Tökéletes! Minden helyeset megtaláltál. ✅"; feedback.className = "mt-4 font-bold text-center p-3 rounded bg-green-600/20 text-green-400 border border-green-500 block";
+            } else {
+                feedback.innerHTML = "Nem teljesen. ❌"; feedback.className = "mt-4 font-bold text-center p-3 rounded bg-red-600/20 text-red-400 border border-red-500 block";
+            }
+            document.getElementById(`next-${chId}`).classList.remove('hidden');
+        };
+
+        window.selectMatch = function(chId, side, id) {
+            const state = activeGames[chId];
+            const el = document.getElementById(`${side}-${chId}-${id}`);
+            if (el.classList.contains('matched')) return;
+
+            const prev = side === 'left' ? state.selectedLeftEl : state.selectedRightEl;
+            if (prev) prev.classList.remove('selected');
+            el.classList.add('selected');
+
+            if (side === 'left') { state.selectedLeft = id; state.selectedLeftEl = el; } 
+            else { state.selectedRight = id; state.selectedRightEl = el; }
+
+            if (state.selectedLeft !== null && state.selectedRight !== null) {
+                const pairs = state.questions[state.currentQ].pairs;
+                const leftText = pairs[state.selectedLeft].right;
+                const rightText = pairs[state.selectedRight].right;
+
+                if (leftText === rightText) {
+                    state.selectedLeftEl.classList.add('matched'); state.selectedLeftEl.classList.remove('selected');
+                    state.selectedRightEl.classList.add('matched'); state.selectedRightEl.classList.remove('selected');
+                    state.matchedCount++;
+                    state.selectedLeft = null; state.selectedRight = null;
+                    
+                    if (state.matchedCount === state.questions[state.currentQ].pairs.length) {
+                        state.score++;
+                        document.getElementById(`feedback-${chId}`).innerHTML = "Minden pár helyes! ✅";
+                        document.getElementById(`feedback-${chId}`).className = "mt-4 font-bold text-center p-3 rounded bg-green-600/20 text-green-400 border border-green-500 block";
+                        document.getElementById(`next-${chId}`).classList.remove('hidden');
+                        document.getElementById(`match-msg-${chId}`).classList.add('hidden');
+                    }
+                } else {
+                    state.selectedLeftEl.classList.add('error'); state.selectedRightEl.classList.add('error');
+                    setTimeout(() => {
+                        state.selectedLeftEl.classList.remove('error', 'selected'); state.selectedRightEl.classList.remove('error', 'selected');
+                        state.selectedLeft = null; state.selectedRight = null;
+                    }, 400);
+                }
+            }
+        };
+
+        window.nextMiniQuestion = function(chapterId) { activeGames[chapterId].currentQ++; renderMiniGame(chapterId); };
+
+        // --- Döntéshozó & Tudáspróba (Változatlan) ---
+        const gameScenarios = [
+            { text: "Egy KAV hatáskörű alapvizsgát a képzőszervezet 8 munkanappal a vizsga előtt akar bejelenteni. Elfogadod?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "KAV hatáskörű vizsgáknál a határidő szigorúan 10 munkanap." },
+            { text: "Egy Vasúti Társasági vizsgát 6 munkanappal a vizsga előtt jelentenek be. Rögzíted?", options: [{text:"Igen",correct:true}, {text:"Nem",correct:false}], feedback: "Társasági vizsgáknál a határidő 5 munkanap, a 6 nap megfelelő." },
+            { text: "A vizsgázó harmadszor bukott meg az alapvizsgán. Engeded a negyedik próbálkozást?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "3 sikertelen alapvizsga után kötelező a kiegészítő alapképzés." },
+            { text: "Időszakos vizsgán másodszor bukott a dolgozó. Mehet harmadszorra?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Időszakos vizsgánál csak 2 javítóvizsga van. Utána soron kívüli vizsga jön." },
+            { text: "Hatósági soron kívüli vizsgán megbukott a jelölt. Kérhet javítóvizsgát?", options: [{text:"Nem",correct:true}, {text:"Igen",correct:false}], feedback: "Hatósági soron kívüli vizsgánál nincs javítóvizsga. Bukás esetén alapvizsgát kell tenni." },
+            { text: "Helyi vasúti hálózaton a típusismereti vizsgát a vasúti társaság vizsga nélkül akarja meghosszabbítani. Lehetséges?", options: [{text:"Nem",correct:false}, {text:"Igen",correct:true}], feedback: "Helyi hálózaton kompetenciafelméréssel meghosszabbítható (ha volt évi 1 önálló szolgálat)." },
+            { text: "A képzőszervezet 4 munkanappal a KAV vizsga előtt módosítani akarja a vizsgázók névsorát. Engeded?", options: [{text:"Nem",correct:true}, {text:"Igen",correct:false}], feedback: "KAV vizsgánál a módosítás határideje 5 munkanap. Utána új bejelentés." },
+            { text: "Egy társasági vizsgánál a vizsga előtti napon cserélik le a vizsgabiztost. Szabályos?", options: [{text:"Igen",correct:true}, {text:"Nem",correct:false}], feedback: "Társasági vizsgánál a vizsgabiztos személye a vizsga kezdetéig módosítható." },
+            { text: "Alapvizsga után 16 nappal akarják megkezdeni a vizsgáztatást. Engedélyezed?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Az alapvizsgát a képzés végétől számított 14 napon belül meg kell kezdeni." },
+            { text: "A vizsgázó nem jelent meg, de a munkáltatója 2 napon belül igazolta. Kell pótdíjat fizetnie?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Ha a munkáltató 3 munkanapon belül igazolja, a távolmaradás igazolt." },
+            { text: "Egy résztvevő 15%-ot hiányzott a képzésről. Vizsgára bocsátható?", options: [{text:"Igen",correct:false}, {text:"Csak pótlás után",correct:true}], feedback: "10% felett a hiányzást pótolni kell a vizsga előtt." },
+            { text: "A vizsgázó 35%-ot hiányzott. Kéri, hogy konzultációval pótolhassa. Engeded?", options: [{text:"Nem",correct:true}, {text:"Igen",correct:false}], feedback: "30% feletti hiányzás esetén a képzésből ki kell zárni." },
+            { text: "Írásbeli vizsgán 74%-ot ért el a jelölt. Átengeded?", options: [{text:"Nem",correct:true}, {text:"Igen",correct:false}], feedback: "A sikeresség határa minimum 75%." },
+            { text: "Összetett vizsgán megbukott az írásbelin. Mehet szóbelizni?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "A szóbeli vizsga feltétele a sikeres írásbeli." },
+            { text: "A gyakorlati oktató csak érettségivel rendelkezik, de van 4 év gyakorlata. Felveszed a névjegyzékbe?", options: [{text:"Igen",correct:true}, {text:"Nem",correct:false}], feedback: "Érettségi esetén min. 3 év szakmai gyakorlat szükséges." },
+            { text: "Egy oktató 2 éve nem volt továbbképzésen. Tarthat órát?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Az éves továbbképzés elmulasztása törlést von maga után." },
+            { text: "A vizsga helyszínéről 2 nappal előtte értesítik a hatóságot. Szabályos?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "A hatóságot legalább 3 nappal a vizsga előtt értesíteni kell." },
+            { text: "Puskázáson értél egy vizsgázót. Eltiltod?", options: [{text:"Igen",correct:true}, {text:"Nem",correct:false}], feedback: "Meg nem engedett segédeszköz használata esetén a vizsgát fel kell függeszteni." },
+            { text: "A vizsgázó ittasan jelent meg. Mennyi időre tiltod el?", options: [{text:"Min. 1 évre",correct:false}, {text:"1-6 hónapra",correct:true}], feedback: "Bódító hatás esetén az eltiltás 1-től 6 hónapig terjedhet." },
+            { text: "7 éve nem dolgozott vasúton a jelölt. Elég neki az időszakos vizsga?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "6 évet meghaladó távollét esetén új alapvizsgát kell tenni." },
+            { text: "Külföldi mozdonyvezetői engedélyt akarnak használni. Elfogadod?", options: [{text:"Azonnal",correct:false}, {text:"Csak honosítás után",correct:true}], feedback: "Külföldi képesítés esetén honosítási eljárás szükséges." },
+            { text: "Új vasútvonal épült. A régi vizsgával dolgozhatnak rajta?", options: [{text:"Nem",correct:true}, {text:"Igen",correct:false}], feedback: "Új infrastruktúra esetén kötelező a specifikus vonalismereti képzés." },
+            { text: "A képzőszervezet nem jelentette be a képzést, de a vizsgát igen. Megtartható a vizsga?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "A vizsga feltétele a szabályosan bejelentett és lefolytatott képzés." },
+            { text: "Egy társaság saját hatáskörben vizsgáztatna forgalmi utasításból országos pályán. Lehet?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Országos pályahálózaton az általános forgalmi vizsga KAV hatáskör." },
+            { text: "Előzetes orvosi vizsgálaton 'nem alkalmas' lett a jelölt. Elkezdheti a gyakorlati képzést?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "A gyakorlati képzés feltétele az orvosi alkalmasság." },
+            { text: "A vizsgázó a vizsga előtt 1 nappal mondja le. Törölhető a vizsga díjmentesen?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "A törlés határideje 5 munkanap." },
+            { text: "Egy oktató vizsgáztatni akarja azt a csoportot, akit tanított. Engeded?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Összeférhetetlenség miatt oktató nem vizsgáztathatja a saját csoportját." },
+            { text: "A vizsgázó nagybátyja a vizsgabiztos. Lehet?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Hozzátartozói viszony kizáró ok." },
+            { text: "Egy 32 fős csoportot jelentenek be elméleti oktatásra. Engedélyezed?", options: [{text:"Igen",correct:false}, {text:"Nem",correct:true}], feedback: "Az elméleti képzés csoportlétszáma maximum 30 fő lehet." },
+            { text: "A vasúti társaság vizsga nélkül, kompetenciafelméréssel hosszabbítana metróhálózaton. Lehet?", options: [{text:"Igen",correct:true}, {text:"Nem",correct:false}], feedback: "Városi hálózaton (pl. metró) a speciális hosszabbítási szabályok érvényesek." }
+        ];
+
+        let currentGameIdx = 0;
+        let gamePoints = 0;
+
+        function startDecisionGame() {
+            document.getElementById('game-start').classList.add('hidden');
+            document.getElementById('game-ui').classList.remove('hidden');
+            gamePoints = 0;
+            currentGameIdx = 0;
+            updateSkillMeter(0);
+            shuffleArray(gameScenarios);
+            loadGameScenario();
+        }
+
+        function loadGameScenario() {
+            const data = gameScenarios[currentGameIdx];
+            document.getElementById('scenario-num').innerText = currentGameIdx + 1;
+            document.getElementById('scenario-text').innerText = data.text;
+            const container = document.getElementById('game-options');
+            container.innerHTML = '';
+            let options = [...data.options];
+            shuffleArray(options);
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-lg border border-slate-600 bg-slate-800 hover:bg-slate-700 transition text-white font-medium shadow-md";
+                btn.innerText = opt.text;
+                btn.onclick = () => checkGameAnswer(opt, btn);
+                container.appendChild(btn);
+            });
+            document.getElementById('game-feedback').classList.add('hidden');
+            document.getElementById('game-next-btn').classList.add('hidden');
+        }
+
+        function checkGameAnswer(option, btn) {
+            const buttons = document.getElementById('game-options').children;
+            for(let b of buttons) b.disabled = true;
+            const feedbackEl = document.getElementById('game-feedback');
+            feedbackEl.classList.remove('hidden');
+            feedbackEl.innerText = gameScenarios[currentGameIdx].feedback;
+            if(option.correct) {
+                gamePoints++;
+                document.getElementById('game-score').innerText = gamePoints;
+                feedbackEl.classList.add('bg-green-600/20', 'text-green-300', 'border-green-500');
+                feedbackEl.classList.remove('bg-red-600/20', 'text-red-300', 'border-red-500');
+                btn.classList.add('border-green-500', 'bg-green-900/50');
+            } else {
+                feedbackEl.classList.add('bg-red-600/20', 'text-red-300', 'border-red-500');
+                feedbackEl.classList.remove('bg-green-600/20', 'text-green-300', 'border-green-500');
+                btn.classList.add('border-red-500', 'bg-red-900/50');
+            }
+            updateSkillMeter();
+            document.getElementById('game-next-btn').classList.remove('hidden');
+        }
+
+        function updateSkillMeter() {
+            const percentage = (gamePoints / 30) * 100;
+            document.getElementById('skill-fill').style.height = percentage + '%';
+            const rankEl = document.getElementById('current-rank');
+            if (percentage < 30) rankEl.innerText = "Gyakornok";
+            else if (percentage < 60) rankEl.innerText = "Kezdő Vasutas";
+            else if (percentage < 90) rankEl.innerText = "Szakértő";
+            else rankEl.innerText = "Főfelügyelő";
+        }
+
+        function nextScenario() {
+            currentGameIdx++;
+            if(currentGameIdx < gameScenarios.length) {
+                loadGameScenario();
+            } else {
+                document.getElementById('game-ui').classList.add('hidden');
+                document.getElementById('game-end').classList.remove('hidden');
+                document.getElementById('final-game-score').innerText = gamePoints;
+                const msgEl = document.getElementById('final-feedback-text');
+                if (gamePoints >= 27) {
+                    msgEl.innerText = "Gratulálunk! Kiváló eredmény. Te igazi vasúti szaktekintély vagy!";
+                    msgEl.className = "bg-green-600/20 text-green-200 p-6 rounded-xl border border-green-500/50";
+                } else if (gamePoints >= 15) {
+                    msgEl.innerText = "Szép munka! Az alapok megvannak, de a finom részleteket még érdemes átnézni.";
+                    msgEl.className = "bg-yellow-600/20 text-yellow-200 p-6 rounded-xl border border-yellow-500/50";
+                } else {
+                    msgEl.innerText = "Ez most nem sikerült túl jól. Érdemes újra átolvasni a tananyagot.";
+                    msgEl.className = "bg-red-600/20 text-red-200 p-6 rounded-xl border border-red-500/50";
+                }
+            }
+        }
+
+        function resetDecisionGame() {
+            document.getElementById('game-end').classList.add('hidden');
+            startDecisionGame();
+        }
+
+        // --- NAGY TUDÁSPRÓBA (30 Kérdés - A te listád alapján) ---
+        const quizData = [
+            { q: "Az alábbiak közül melyik a vasútszakmai oktatói névjegyzékbe való felvétel egyik követelménye?", a: ["Rendelkezik egy évnél nem régebbi vasútszakmai oktatói vagy különleges kötöttpályás közlekedési szakmai oktatói vizsgával", "Rendelkezik legalább 10 éves folyamatos vasúti szakmai gyakorlattal vezetői beosztásban", "Rendelkezik a munkáltató által kiállított írásos ajánlással", "Elvégezte a Képzési Módszertani Központ 50 órás pedagógiai tanfolyamát"], correct: 0, exp: "A névjegyzékbe vételhez elengedhetetlen a friss, egy évnél nem régebbi szakmai oktatói vizsga megléte." },
+            { q: "Meddig van lehetőség soron kívüli időszakos vizsgát tenni (NEM hatóság általi kötelezés esetén)?", a: ["6 évet el nem érő távollét esetén", "3 évet el nem érő távollét esetén", "1 évet el nem érő távollét esetén", "Korlátlan ideig"], correct: 0, exp: "6 évnél rövidebb távollét esetén elegendő a soron kívüli vizsga, ezen túlmenően már alapképzésre lehet szükség." },
+            { q: "Mi a pótvizsga?", a: ["Igazolt távolmaradás esetén – külön díj megfizetése nélkül – teendő vizsga", "Sikertelen vizsga esetén díjfizetés ellenében teendő újabb vizsga", "A hatóság által elrendelt rendkívüli vizsga", "Az alapképzés megismétlése után teendő vizsga"], correct: 0, exp: "A pótvizsga lényege, hogy a vizsgázó önhibáján kívül maradt távol, így mentesül a díjfizetés alól." },
+            { q: "Mikor tekinthető igazoltnak a vizsgáról távolmaradás?", a: ["Ha a vizsgázó munkáltatója három munkanapon belül a vizsgáztató szervezet felé igazolja a távolmaradást", "Ha a vizsgázó telefonon jelzi a távolmaradását a vizsga napján", "Ha a vizsgázó 8 napon belül orvosi igazolást küld", "Ha a vizsgázó előre írásban lemondja a vizsgát"], correct: 0, exp: "A szabályzat 3 munkanapos határidőt ír elő a munkáltatói igazolás benyújtására." },
+            { q: "Milyen feltételekkel kérhető alapképzésben óralátogatás alól felmentés?", a: ["Az állami felsőfokú végzettséggel rendelkező képzésben részt vevő és a képzést megrendelő vasúti társaság együttes kérelmére, ha a szükséges konzultációs lehetőség biztosított", "Ha a résztvevő legalább 5 éves szakmai gyakorlattal rendelkezik", "Kizárólag tartós betegség esetén, orvosi igazolással", "Ha a résztvevő nyilatkozik az otthoni felkészülésről"], correct: 0, exp: "A felsőfokú végzettség és a munkáltató által biztosított konzultáció együttesen alapozza meg a felmentést." },
+            { q: "Távollét esetén mennyi elmaradt oktatást és hogyan kell pótolni?", a: ["Az adott munkakörből az alapvizsgák érvényességét meghaladó, de a hat évet el nem érő távollét esetében az időszakos oktatást legalább a távollét utolsó évének megfelelő egy éves oktatási időkeretnek megfelelő óraszámban kell pótolni", "Az összes elmulasztott év oktatását teljes egészében pótolni kell", "Nem kell pótolni az oktatást, csak vizsgázni kell", "Fél évnyi oktatást kell pótolni"], correct: 0, exp: "Hosszabb távollét esetén a visszatéréshez elegendő az utolsó év anyagát pótolni a szinten tartás érdekében." },
+            { q: "Melyik munkakörökben vizsgáztat vizsgabizottságban két fő vizsgabiztos?", a: ["A kocsivizsgáló és a vasútszakmai oktató alapvizsgákon", "Kizárólag a mozdonyvezetői vizsgákon", "Minden forgalmi szolgálattevő vizsgán", "Csak a vasútüzem-vezetői vizsgákon"], correct: 0, exp: "Ezeknél a kiemelt szakmai felelősséggel járó vizsgáknál kötelező a legalább kétfős bizottság." },
+            { q: "Ki és milyen módon vehet részt megfigyelőként a vizsga szóbeli vizsgatevékenység részén?", a: ["A vizsgáztató szervezettel a vizsgát megelőző két munkanappal közölt bejelentés alapján a képzőszervezet vagy regisztrált szervezet egy képviselője", "Bárki részt vehet, aki a helyszínen jelzi szándékát", "Csak a hatóság képviselője vehet részt", "A vizsgázó hozzátartozója írásbeli kérelemre"], correct: 0, exp: "A részvételhez a képzőszervezet delegáltjának előzetes bejelentkezése szükséges." },
+            { q: "Melyik esetben kell a felsoroltak közül soron kívüli orvosi alkalmassági vizsgálatra küldeni a munkavállalót?", a: ["A forgalom biztonságát veszélyeztető helyzetet idéz elő, balesetet okoz, illetve munkaköre vagy feladatköre ellátásával összefüggésben munkabalesetet szenved", "A 40. életév betöltésekor", "Hosszabb szabadság után", "Évente egyszer rutinszerűen"], correct: 0, exp: "Ilyen eseményeknél felmerülhet egészségügyi ok, ezért kötelező a vizsgálat." },
+            { q: "Ismertesse az időszakos orvosi vizsgálat esedékességét!", a: ["Negyvenedik életév betöltését megelőzően ötévente, negyvenedik életév betöltését követően, de a hatvankettedik életév betöltését megelőzően háromévente, a hatvankettedik életév betöltését követően évente", "Minden korosztály számára kétévente", "40 év alatt tízévente, felette ötévente", "Csak panasz esetén"], correct: 0, exp: "Az életkor előrehaladtával a kockázatok nőnek, így a vizsgálatok sűrűsödnek (5, 3, majd 1 év)." },
+            { q: "A következő esetek közül mikor szükséges előzetes orvosi vizsgálatot tartani?", a: ["A vasúti közlekedés biztonságával összefüggő munkakörben hat hónapot meghaladó keresőképtelenség után ismételten foglalkoztatni kívánt személynél a munkavégzés megkezdését megelőzően", "Minden rövid betegállomány után", "Lakcímváltozás esetén", "Új munkaruha igénylésekor"], correct: 0, exp: "Hosszú (fél évet meghaladó) kihagyás után ellenőrizni kell az egészségügyi alkalmasságot." },
+            { q: "Az alábbiak közül melyek lehetnek az előzetes orvosi vizsgálatnak a lehetséges kimenetelei?", a: ["„Alkalmas”, „ideiglenesen nem alkalmas” vagy „nem alkalmas”", "„Megfelelt” vagy „Nem felelt meg”", "„Kiváló”, „Jó”, „Közepes”", "„Engedélyezett” vagy „Elutasított”"], correct: 0, exp: "Ezek a hivatalos kategóriák az orvosi alkalmasság megállapítására." },
+            { q: "Alapvizsga esetén hány javítóvizsga lehetőség áll a vizsgázó rendelkezésére?", a: ["3", "1", "2", "5"], correct: 0, exp: "Az alapvizsgánál a szabályozás legfeljebb 3 javítóvizsgát engedélyez." },
+            { q: "A hatóság által elrendelt soron kívüli időszakos vizsga esetén hány javítóvizsga lehetőség áll a vizsgázó rendelkezésére?", a: ["Nincs javítóvizsga lehetőség", "1 alkalom", "2 alkalom", "3 alkalom"], correct: 0, exp: "Mivel ez egy hatósági kényszerintézkedés, itt nincs lehetőség javításra." },
+            { q: "Időszakos vizsga esetén hány javítóvizsga lehetőség áll a vizsgázó rendelkezésére?", a: ["2", "1", "3", "Nincs lehetőség"], correct: 0, exp: "A normál időszakos vizsgák esetében két javítási lehetőséget biztosít a szabályzat." },
+            { q: "A vasúti vizsgaközpont hatáskörébe tartozó vizsgával végződő képzés esetén, mely szervezet jóváhagyásához van kötve a képzési program alkalmazása?", a: ["A vasútszakmai oktató és a vasútüzem-vezető képzések esetén a vasúti hatóság, egyéb képzések esetén a képzési módszertani központ", "Kizárólag a vasúti hatóság minden esetben", "Csak a Képzési Módszertani Központ", "A vasúti társaság vezérigazgatója"], correct: 0, exp: "A két kiemelt szintű képzést közvetlenül a hatóság hagyja jóvá, a többit a szakmai központ." },
+            { q: "Vasúti társasági képzési program alkalmazása mely szervezet jóváhagyásához van kötve?", a: ["A vizsgáztató vasúti szervezet, vagy a képzési módszertani központ", "Kizárólag a Nemzeti Közlekedési Hatóság", "Az Oktatási Minisztérium", "A Vasutas Szakszervezet"], correct: 0, exp: "Társasági vizsgáknál maga a vizsgáztató szervezet (vagy a KMK) hagyja jóvá a programot." },
+            { q: "Vasúti társasági vizsgával záruló alapképzés képzési programjának elfogadásához mely esetben szükséges a képzési módszertani központ jóváhagyása?", a: ["Vonalismeret képzés esetén, ha a képzés videófilm, vagy szimulátor segítségével történik", "Minden esetben kötelező", "Soha nem szükséges", "Csak ha külföldi oktató tartja a képzést"], correct: 0, exp: "Speciális technológiák alkalmazásakor a KMK szakmai kontrollja szükséges." },
+            { q: "Hol található a vasúti vizsgaközpont hatáskörébe tartozó vizsgával végződő képzések ismeretanyaga és a lehetséges vizsgakérdések?", a: ["A vasúti vizsgaközpont honlapján, a Vizsgaszabályzat és Eljárási rend függelékeiben", "A Magyar Közlönyben", "A vasúti társaság belső szabályzatában", "A tankönyvek végén"], correct: 0, exp: "A hivatalos forrás a Vizsgaközpont honlapja és az ott közzétett szabályzatok." },
+            { q: "Hány fő vehet részt egy gyakorlati bemutatón egyszerre?", a: ["A képzési program határozza meg, de legfeljebb 12 fő a 19/2011. (V.10.) NFM rendelet szerint", "Legfeljebb 20 fő", "Nincs létszámkorlát", "Legfeljebb 5 fő"], correct: 0, exp: "A rendelet maximálja a létszámot a hatékonyság és biztonság érdekében." },
+            { q: "Melyik állítás igaz a 19/2011. (V.10.) NFM rendeletre vonatkozóan?", a: ["Ez a rendelet meghatározza a vasúti képzések, vizsgák szabályait, a képzőszervek működését, vizsgákra vonatkozó előírásokat", "A vasúti munkavállalók egészségügyi alkalmassági vizsgálatairól szól", "A vasúti menetrend készítésének szabályait írja le", "A vasúti pályák építési szabványa"], correct: 0, exp: "Ez a rendelet a vasúti képzési rendszer alapjogszabálya." },
+            { q: "Mely állítás igaz a 203/2009. (IX.18.) Kormányrendeletre?", a: ["Vasúti munkavállalók egészségügyi alkalmassági vizsgálatairól, a vizsgálatokat végző szervezet működésének alapszabályairól szól", "A vasúti képzések és vizsgák rendjét szabályozza", "A vasúti balesetek kivizsgálásáról szól", "A vasúti díjszabást határozza meg"], correct: 0, exp: "Ez a jogszabály rendezi a vasutasok orvosi alkalmassági kérdéseit." },
+            { q: "Mely munkakörökre vonatkozik a 203/2009. (IX.18.) Kormányrendelet?", a: ["A rendelet 1. sz. mellékletében felsorolt olyan munkakörökre, amelyek a vasúti közlekedés biztonságával összefüggenek", "Minden vasúti társaságnál dolgozó munkavállalóra", "Kizárólag a mozdonyvezetőkre", "Csak azokra, akik éjszakai műszakban dolgoznak"], correct: 0, exp: "A rendelet hatálya a biztonsági szempontból kritikus munkakörökre terjed ki." },
+            { q: "Mely munkakörökre vonatkozik a 19/2011. (V.10.) NFM rendelet?", a: ["A rendelet 1. sz. mellékletében felsorolt olyan munkakörökre, amelyek a vasúti közlekedés biztonságával összefüggenek", "Csak a vezetői munkakörökre", "Minden közlekedési ágazat dolgozóira", "Csak az állami vasúttársaság dolgozóira"], correct: 0, exp: "A képzési rendelet is a biztonsági szempontból releváns munkaköröket szabályozza." },
+            { q: "Milyen szervezet végezhet vasúti alapképzést?", a: ["Képzési engedéllyel rendelkező képzőszervezet", "Bármely gazdasági társaság", "Bármely vasúti társaság engedély nélkül", "Kizárólag állami egyetemek"], correct: 0, exp: "Alapképzést csak hivatalos engedéllyel rendelkező szervezet tarthat." },
+            { q: "Milyen oktatásokat, képzéseket végezhet a regisztrált szervezet?", a: ["Időszakos oktatásokat", "Alapképzéseket", "Hatósági vizsgáztatást", "Orvosi vizsgálatokat"], correct: 0, exp: "A regisztrált szervezetek jogosultsága az időszakos oktatásokra terjed ki." },
+            { q: "Melyik rendeletben és hol találhatóak a vasúti vizsga elnevezések, képzésben részvétel feltételei, képzés és a vizsga témakörei és a betölthető munkakörök?", a: ["19/2011. (V.10.) NFM rendelet 3. sz. mellékletében", "A 203/2009. (IX.18.) Kormányrendeletben", "A Munka Törvénykönyvében", "A 19/2011. rendelet 1. sz. mellékletében"], correct: 0, exp: "A 3. melléklet a 'törzskönyve' a képzéseknek és vizsgáknak." },
+            { q: "Hol találhatóak a vasúti vizsgák egymással történő megfeleltetései?", a: ["A vasúti vizsgaközpont honlapján, a Vizsgaszabályzat és Eljárási Rend függelékeiben", "A törvény szövegében", "A munkaszerződésekben", "A menetrendi utasításban"], correct: 0, exp: "A megfeleltetéseket a KAV teszi közzé a szabályzataiban." },
+            { q: "Milyen vizsgának számít az eltérés alapvizsga?", a: ["Alapvizsgának, de a hozzá tartozó alapvizsga érvényességét nem hosszabbítja meg", "Időszakos vizsgának", "Pótvizsgának", "Nem számít vizsgának"], correct: 0, exp: "Az eltérés vizsga új ismereteket kér számon (alapvizsga jellegű), de nem hosszabbítja meg a ciklust." },
+            { q: "Melyik állítás igaz az OKJ végzettségekre és a szakképesítésre? Amennyiben a rendelet melléklete tartalmazza a megfeleltetést...", a: ["…a munkavállaló és a munkáltató kérheti a képzési módszertani központtól, hogy alapképzésen ne kelljen részt venni, csak vizsgára kelljen bejelenteni", "…automatikusan megkapja a vizsgát és az engedélyt", "…nem kell semmilyen vizsgát tennie", "…újra kell járnia az iskolát"], correct: 0, exp: "A megfelelő szakmai végzettség mentesíthet a tanfolyam alól, de a vizsga alól nem feltétlenül." }
+        ];
+
+        let quizIdx = 0;
+        let quizPoints = 0;
+
+        function startQuiz() {
+            document.getElementById('quiz-start-panel').classList.add('hidden');
+            document.getElementById('quiz-interface').classList.remove('hidden');
+            quizIdx = 0;
+            quizPoints = 0;
+            shuffleArray(quizData);
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            const qData = quizData[quizIdx];
+            document.getElementById('quiz-current-num').innerText = quizIdx + 1;
+            document.getElementById('quiz-score').innerText = quizPoints;
+            document.getElementById('quiz-question-text').innerText = qData.q;
+            document.getElementById('quiz-explanation').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+            
+            const bar = document.getElementById('quiz-progress');
+            bar.style.width = ((quizIdx) / quizData.length * 100) + "%";
+
+            const container = document.getElementById('quiz-options');
+            container.innerHTML = '';
+
+            let options = qData.a.map((text, index) => ({ text, isCorrect: index === qData.correct }));
+            shuffleArray(options);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition text-gray-700 font-medium shadow-sm";
+                btn.innerText = opt.text;
+                btn.onclick = () => checkQuizAnswer(opt, btn, options);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(choice, btn, allOpts) {
+            const container = document.getElementById('quiz-options');
+            Array.from(container.children).forEach(b => b.disabled = true);
+
+            if (choice.isCorrect) {
+                quizPoints++;
+                document.getElementById('quiz-score').innerText = quizPoints;
+                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+            } else {
+                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                Array.from(container.children).forEach(b => {
+                    const text = b.innerText;
+                    if (allOpts.find(o => o.txt === text).isCorrect) {
+                        b.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                    }
+                });
+            }
+
+            const expEl = document.getElementById('quiz-explanation');
+            document.getElementById('quiz-explanation-text').innerText = quizData[quizIdx].exp;
+            expEl.classList.remove('hidden');
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            quizIdx++;
+            if (quizIdx < quizData.length) {
+                loadQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-interface').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('final-quiz-score').innerText = quizPoints;
+            
+            const fb = document.getElementById('quiz-feedback-text');
+            const percent = (quizPoints / 30) * 100;
+            if (percent >= 90) fb.innerText = "Kiváló! Elméleti tudásod szinte tökéletes.";
+            else if (percent >= 75) fb.innerText = "Sikeres! A vizsgán átmennél (75% felett).";
+            else if (percent >= 50) fb.innerText = "Közepes. Vannak hiányosságok.";
+            else fb.innerText = "Sajnos ez kevés. Javasoljuk a tananyag ismétlését.";
+        }
+    </script>
+</body>
+</html>
